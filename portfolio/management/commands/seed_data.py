@@ -14,9 +14,9 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS('Starting to seed database...'))
         
         # Create superuser if it doesn't exist
-        if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'admin123')
-            self.stdout.write(self.style.SUCCESS('Superuser "admin" created'))
+        if not User.objects.filter(username='nimra').exists():
+            User.objects.create_superuser('nimra', 'nimranaseeb101@gmail.com', 'nimra1056')
+            self.stdout.write(self.style.SUCCESS('Superuser "nimra" created'))
         
         # Create About
         about, created = About.objects.get_or_create(
