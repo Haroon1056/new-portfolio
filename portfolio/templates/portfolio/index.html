@@ -1,0 +1,177 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Home - Graphic Designer Portfolio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-3 fw-bold mb-4">Creating Visual Stories That Inspire</h1>
+                <p class="lead mb-4">I'm a graphic designer passionate about creating beautiful, functional designs that help brands stand out.</p>
+                <a href="{% url 'portfolio' %}" class="btn btn-primary btn-lg me-3">View Portfolio</a>
+                <a href="{% url 'contact' %}" class="btn btn-outline-primary btn-lg">Let's Talk</a>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <img src="{% static 'portfolio/images/hero-image.png' %}" alt="Hero Image" class="img-fluid rounded-3">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Work Section -->
+<section class="featured-work py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">Featured Work</h2>
+            <p class="lead">Some of my recent projects</p>
+        </div>
+        <div class="row g-4">
+            {% for project in featured_projects %}
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="portfolio-card">
+                    {% if project.featured_image and project.featured_image.url %}
+                        <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" class="img-fluid">
+                    {% else %}
+                        <div class="placeholder-image">
+                            <div>
+                                <i class="fas fa-image mb-2"></i>
+                                <span>{{ project.title }}</span>
+                                <small style="display: block; font-size: 0.8rem; margin-top: 10px; opacity: 0.8;">Coming Soon</small>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="portfolio-overlay">
+                        <h4>{{ project.title }}</h4>
+                        <p>{{ project.category.name }}</p>
+                        <a href="{% url 'portfolio-detail' project.slug %}" class="btn btn-light">View Project</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No featured projects yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">Services I Offer</h2>
+            <p class="lead">Professional design solutions for your brand</p>
+        </div>
+        <div class="row g-4">
+            {% for service in services %}
+            <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="service-card text-center p-4">
+                    <i class="{{ service.icon }} fa-3x mb-3 text-primary"></i>
+                    <h4>{{ service.title }}</h4>
+                    <p>{{ service.description|truncatewords:20 }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No services added yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- About Preview Section (if it has profile image) -->
+<section class="about-preview py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                {% if about and about.profile_image and about.profile_image.url %}
+                    <img src="{{ about.profile_image.url }}" alt="{{ about.name }}" class="img-fluid rounded-3">
+                {% else %}
+                    <div class="placeholder-image placeholder-image-lg">
+                        <div>
+                            <i class="fas fa-user-circle mb-2"></i>
+                            <span>{{ about.name|default:"Designer" }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <!-- Rest of the about content -->
+                <h2 class="display-5 fw-bold mb-4">Hi, I'm {{ about.name|default:"Your Name" }}</h2>
+                <p class="lead mb-4">{{ about.title|default:"Graphic Designer" }}</p>
+                <p class="mb-4">{{ about.bio|truncatewords:50|default:"Welcome to my portfolio! I'm passionate about creating beautiful designs that help brands stand out." }}</p>
+                
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <h3 class="display-6 fw-bold">{{ about.experience_years|default:"5" }}+</h3>
+                            <p>Years Experience</p>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-box">
+                            <h3 class="display-6 fw-bold">{{ about.projects_completed|default:"100" }}+</h3>
+                            <p>Projects Completed</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <a href="{% url 'about' %}" class="btn btn-primary">More About Me</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+{% comment %} {% if testimonials %}
+<section class="testimonials py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-5 fw-bold">What Clients Say</h2>
+            <p class="lead">Testimonials from happy clients</p>
+        </div>
+        <div class="row">
+            {% for testimonial in testimonials %}
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="testimonial-card p-4">
+                    <div class="mb-3">
+                        {% for i in "12345"|make_list %}
+                            {% if forloop.counter <= testimonial.rating %}
+                            <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                            <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="mb-4">"{{ testimonial.testimonial }}"</p>
+                    <div class="d-flex align-items-center">
+                        {% if testimonial.client_image %}
+                        <img src="{{ testimonial.client_image.url }}" alt="{{ testimonial.client_name }}" class="rounded-circle me-3" width="50" height="50">
+                        {% endif %}
+                        <div>
+                            <h6 class="mb-0">{{ testimonial.client_name }}</h6>
+                            <small>{{ testimonial.client_company }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %} {% endcomment %}
+
+<!-- Contact CTA -->
+<section class="contact-cta py-5">
+    <div class="container text-center" data-aos="fade-up">
+        <h2 class="display-5 fw-bold mb-4">Ready to Start Your Project?</h2>
+        <p class="lead mb-4">Let's create something amazing together</p>
+        <a href="{% url 'contact' %}" class="btn btn-primary btn-lg">Get in Touch</a>
+    </div>
+</section>
+{% endblock %}

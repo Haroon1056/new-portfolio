@@ -1,0 +1,95 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}Portfolio - Graphic Designer Portfolio{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header py-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">My Portfolio</h1>
+        <p class="lead">A collection of my recent work</p>
+    </div>
+</section>
+
+<!-- Portfolio Filter -->
+<section class="portfolio-filter py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="btn-group filter-buttons" role="group">
+                    <a href="{% url 'portfolio' %}" class="btn btn-outline-primary {% if not selected_category %}active{% endif %}">All</a>
+                    {% for category in categories %}
+                    <a href="{% url 'portfolio' %}?category={{ category.slug }}" class="btn btn-outline-primary {% if selected_category == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Portfolio Grid -->
+<section class="portfolio-grid py-5">
+    <div class="container">
+        <div class="row g-4">
+            {% for project in projects %}
+            <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="portfolio-card">
+                    {% if project.featured_image and project.featured_image.url %}
+                        <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" class="img-fluid" style="height: 300px; object-fit: cover;">
+                    {% else %}
+                        <div class="placeholder-image">
+                            <div>
+                                <i class="fas fa-paint-brush mb-2"></i>
+                                <span>{{ project.title }}</span>
+                                <small style="display: block; font-size: 0.8rem; margin-top: 10px; opacity: 0.8;">{{ project.category.name }}</small>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="portfolio-overlay">
+                        <h4>{{ project.title }}</h4>
+                        <p>{{ project.category.name }}</p>
+                        <a href="{% url 'portfolio-detail' project.slug %}" class="btn btn-light">View Project</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>No projects found.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Pagination -->
+{% if projects.has_other_pages %}
+<section class="pagination-section py-4">
+    <div class="container">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if projects.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ projects.previous_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}">Previous</a>
+                </li>
+                {% endif %}
+                
+                {% for i in projects.paginator.page_range %}
+                <li class="page-item {% if projects.number == i %}active{% endif %}">
+                    <a class="page-link" href="?page={{ i }}{% if selected_category %}&category={{ selected_category }}{% endif %}">{{ i }}</a>
+                </li>
+                {% endfor %}
+                
+                {% if projects.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ projects.next_page_number }}{% if selected_category %}&category={{ selected_category }}{% endif %}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

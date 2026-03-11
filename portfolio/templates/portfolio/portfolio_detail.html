@@ -1,0 +1,169 @@
+{% extends 'portfolio/base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} - Graphic Designer Portfolio{% endblock %}
+
+{% block content %}
+<!-- Project Header -->
+<section class="project-header py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-3">{{ project.title }}</h1>
+                <p class="lead mb-4">{{ project.category.name }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Main Image -->
+<section class="project-main-image py-3">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                {% if project.featured_image and project.featured_image.url %}
+                    <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" class="img-fluid rounded-3 shadow">
+                {% else %}
+                    <div class="placeholder-image placeholder-image-lg" style="height: 500px;">
+                        <div>
+                            <i class="fas fa-image fa-4x mb-3"></i>
+                            <span>{{ project.title }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Project Details -->
+<section class="project-details py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <h3 class="mb-4">Project Overview</h3>
+                <p class="mb-4">{{ project.description|linebreaks|default:"Project description coming soon." }}</p>
+                
+                <!-- Project Gallery -->
+                <div class="project-gallery">
+                    <h3 class="mb-4">Project Gallery</h3>
+                    <div class="row g-3">
+                        {% if project.image_1 and project.image_1.url %}
+                        <div class="col-md-4">
+                            <img src="{{ project.image_1.url }}" alt="{{ project.title }}" class="img-fluid rounded-3">
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.image_2 and project.image_2.url %}
+                        <div class="col-md-4">
+                            <img src="{{ project.image_2.url }}" alt="{{ project.title }}" class="img-fluid rounded-3">
+                        </div>
+                        {% endif %}
+                        
+                        {% if project.image_3 and project.image_3.url %}
+                        <div class="col-md-4">
+                            <img src="{{ project.image_3.url }}" alt="{{ project.title }}" class="img-fluid rounded-3">
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Show placeholders for missing gallery images if main image exists -->
+                        {% if project.featured_image and project.featured_image.url %}
+                            {% if not project.image_1 %}
+                            <div class="col-md-4">
+                                <div class="placeholder-image placeholder-image-sm" style="height: 200px;">
+                                    <div>
+                                        <i class="fas fa-image"></i>
+                                        <small>View 1</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if not project.image_2 %}
+                            <div class="col-md-4">
+                                <div class="placeholder-image placeholder-image-sm" style="height: 200px;">
+                                    <div>
+                                        <i class="fas fa-image"></i>
+                                        <small>View 2</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            {% if not project.image_3 %}
+                            <div class="col-md-4">
+                                <div class="placeholder-image placeholder-image-sm" style="height: 200px;">
+                                    <div>
+                                        <i class="fas fa-image"></i>
+                                        <small>View 3</small>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="project-info-card p-4 bg-light rounded-3">
+                    <h4 class="mb-4">Project Info</h4>
+                    
+                    <div class="info-item mb-3">
+                        <h6 class="fw-bold mb-2">Client</h6>
+                        <p>{{ project.client|default:"Confidential" }}</p>
+                    </div>
+                    
+                    <div class="info-item mb-3">
+                        <h6 class="fw-bold mb-2">Category</h6>
+                        <p>{{ project.category.name }}</p>
+                    </div>
+                    
+                    <div class="info-item mb-3">
+                        <h6 class="fw-bold mb-2">Date</h6>
+                        <p>{{ project.project_date|date:"F Y"|default:"Coming Soon" }}</p>
+                    </div>
+                    
+                    {% if project.project_url %}
+                    <div class="info-item mb-3">
+                        <h6 class="fw-bold mb-2">Live Project</h6>
+                        <a href="{{ project.project_url }}" target="_blank" class="btn btn-primary">View Live</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Projects -->
+{% if related_projects %}
+<section class="related-projects py-5 bg-light">
+    <div class="container">
+        <h3 class="text-center mb-5">Related Projects</h3>
+        <div class="row g-4">
+            {% for related in related_projects %}
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'100' }}">
+                <div class="portfolio-card">
+                    {% if related.featured_image and related.featured_image.url %}
+                        <img src="{{ related.featured_image.url }}" alt="{{ related.title }}" class="img-fluid">
+                    {% else %}
+                        <div class="placeholder-image" style="height: 250px;">
+                            <div>
+                                <i class="fas fa-image"></i>
+                                <span>{{ related.title }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="portfolio-overlay">
+                        <h4>{{ related.title }}</h4>
+                        <a href="{% url 'portfolio-detail' related.slug %}" class="btn btn-light">View Project</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,36 @@
+databases:
+  - name: portfolio-db
+    databaseName: portfolio
+    user: portfolio_user
+    plan: free
+
+services:
+  - type: web
+    name: graphic-designer-portfolio
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn portfolio_project.wsgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: portfolio-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"  # Changed to string
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com,localhost,127.0.0.1"
+      - key: EMAIL_HOST
+        value: "smtp.gmail.com"
+      - key: EMAIL_PORT
+        value: "587"  # Changed to string
+      - key: EMAIL_USE_TLS
+        value: "true"  # Changed to string and set to true for Gmail
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: DEFAULT_FROM_EMAIL
+        value: "noreply@yourportfolio.com"
