@@ -2,6 +2,12 @@
 # Exit on error
 set -o errexit
 
+# Install Python 3.11 if needed
+if ! command -v python3.11 &> /dev/null; then
+    echo "Python 3.11 not found, installing..."
+    # This is handled by Render's build system
+fi
+
 # Upgrade pip
 pip install --upgrade pip
 
@@ -14,7 +20,9 @@ python manage.py collectstatic --no-input
 # Apply database migrations
 python manage.py migrate
 
-# Create superuser if it doesn't exist (optional)
-# python manage.py createsuperuser --no-input --username admin --email admin@example.com || true
+python manage.py ensure_superuser
+
+# Seed the database with sample data
+python manage.py seed_data
 
 echo "✅ Build completed successfully!"
